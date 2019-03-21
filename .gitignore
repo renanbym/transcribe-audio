@@ -21,3 +21,7 @@ vendor
 *.out
 
 config/config.*
+
+*.serverless
+
+*.DS_Store

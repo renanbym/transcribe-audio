@@ -1,6 +1,7 @@
 service: transcribe-audio
 
 custom:
+  service: test
   stage: ${env:SLS_STAGE, opt:stage, self:provider.stage, 'dev'}
 
 provider:
@@ -10,7 +11,7 @@ provider:
 
   versionFunctions: false
   region: us-east-1
-  memorySize: 1024
+  memorySize: 128
   timeout: 30
   environment: ${file(../../../config/config.${self:custom.stage}.yml):environment}
 
@@ -20,38 +21,19 @@ provider:
         - 'lambda:InvokeFunction'
       Resource: "*"
 
-    - Effect: 'Allow'
-      Action: 
-        - ssm:GetParameters
-        - ssm:GetParametersByPath
-      Resource: "*"
-
-    - Effect: Allow
-      Action:
-        - "s3:*"
-      Resource: "*"
-
-
 package:
- individually: ${file(../../../config/config.${self:custom.stage}.yml):packageIndidually}
- exclude:
-   - ../../../**
- include:
-   - ../../../bin/**
+  individually: ${file(../../../config/config.${self:custom.stage}.yml):packageIndidually}
+  exclude:
+    - ../../../**
+  include:
+    - ../../../bin/**
 
 functions:
 
-  hello:
-    handler: bin/hello
+  ping:
+    handler: bin/${self:custom.service}/ping
     events:
       - http:
-          path: hello
+          path: ping
           method: get
           cors: true
-
-  world:
-    handler: bin/world
-    events:
-      - http:
-          path: world
-          method: get
