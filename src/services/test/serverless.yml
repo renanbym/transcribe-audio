@@ -37,3 +37,12 @@ functions:
           path: ping
           method: get
           cors: true
+  
+  pong:
+    runtime: nodejs8.10
+    handler: ${self:custom.service}/pong/pong.handler
+    events:
+      - http:
+          path: pong
+          method: get
+          cors: true
