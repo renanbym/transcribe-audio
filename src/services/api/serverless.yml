@@ -1,12 +1,11 @@
 service: transcribe-audio
 
 custom:
-  service: test
+  service: api
   stage: ${env:SLS_STAGE, opt:stage, self:provider.stage, 'dev'}
 
 provider:
   name: aws
-  runtime: go1.x
   profile: ${file(../../../config/config.${self:custom.stage}.yml):profile}
 
   versionFunctions: false
@@ -14,12 +13,14 @@ provider:
   memorySize: 128
   timeout: 30
   environment: ${file(../../../config/config.${self:custom.stage}.yml):environment}
+  runtime: go1.x
 
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
         - 'lambda:InvokeFunction'
       Resource: "*"
+  
 
 package:
   individually: ${file(../../../config/config.${self:custom.stage}.yml):packageIndidually}
@@ -38,11 +39,10 @@ functions:
           method: get
           cors: true
   
-  pong:
-    runtime: nodejs8.10
-    handler: ${self:custom.service}/pong/pong.handler
+  upload:
+    handler: bin/${self:custom.service}/upload
     events:
       - http:
-          path: pong
-          method: get
+          path: upload
+          method: post
           cors: true

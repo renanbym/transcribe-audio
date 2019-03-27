@@ -15,9 +15,9 @@ GOBUILD=env GOOS=linux go build -ldflags="-s -w" -o
 ## go-build: Build files. Runs `make go-build` internally.
 go-build: 
 	@echo "  >  Building binary..."
-	dep ensure -v
+	dep ensure
 	@for function in $(GOFUNCTIONS) ; do \
-		echo "	  > function: "$$function; \
+		echo "  	> function: "$$function; \
 		$(GOBUILD) bin/$$function src/services/$$function/main.go ; \
 	done
 
@@ -28,10 +28,10 @@ go-clean:
 	
 ## go-deploy: Deploy build files with Serverless. Runs `make go-deploy` internally.
 go-deploy: 
-	@echo "  >  Deploy Serverless..."
 	@-$(MAKE) go-clean go-build
-	@echo "  	>  Service: test"
-	cd src/services/test; SLS_DEBUG=* sls deploy -v
+	@echo "  >  Deploy Serverless..."
+	@echo "  	>  Service: api"
+	cd src/services/api; sls deploy
 
 
 .PHONY: help
